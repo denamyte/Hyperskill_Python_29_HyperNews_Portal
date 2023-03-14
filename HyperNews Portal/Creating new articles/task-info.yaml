@@ -791,6 +791,6 @@ files:
     if __name__ == '__main__':
         HyperNewsTestRunner().run_tests()
   learner_created: false
-feedback_link: https://hyperskill.org/projects/102/stages/564/implement#comment
+feedback_link: https://hyperskill.org/learn/step/9414#comment
 status: Unchecked
 record: -1

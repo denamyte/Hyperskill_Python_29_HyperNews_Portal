@@ -781,6 +781,21 @@ files:
     if __name__ == '__main__':
         HyperNewsTestRunner().run_tests()
   learner_created: false
-feedback_link: https://hyperskill.org/projects/102/stages/561/implement#comment
-status: Unchecked
+- name: news/templates/news/index.html
+  visible: true
+  learner_created: true
+- name: news/urls.py
+  visible: true
+  learner_created: true
+- name: hypernews/news.json
+  visible: true
+  learner_created: true
+- name: db.sqlite3
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/9411#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Tue, 14 Mar 2023 13:22:53 UTC"
 record: -1
