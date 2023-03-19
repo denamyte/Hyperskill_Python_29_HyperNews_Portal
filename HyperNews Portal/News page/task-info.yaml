@@ -784,6 +784,24 @@ files:
     if __name__ == '__main__':
         HyperNewsTestRunner().run_tests()
   learner_created: false
+- name: news/templates/news/index.html
+  visible: true
+  learner_created: true
+- name: news/urls.py
+  visible: true
+  learner_created: true
+- name: db.sqlite3
+  visible: true
+  learner_created: true
+- name: hypernews/news.json
+  visible: true
+  learner_created: true
+- name: news/templates/news/article.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/9412#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Sun, 19 Mar 2023 20:21:29 UTC"
 record: -1
