@@ -788,6 +788,54 @@ files:
     if __name__ == '__main__':
         HyperNewsTestRunner().run_tests()
   learner_created: false
+- name: news/templates/news/index.html
+  visible: true
+  learner_created: true
+- name: news/urls.py
+  visible: true
+  learner_created: true
+- name: db.sqlite3
+  visible: true
+  learner_created: true
+- name: news/templates/news/article.html
+  visible: true
+  learner_created: true
+- name: hypernews/news.json
+  visible: true
+  learner_created: true
+- name: news/templates/news/main.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/9413#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #5
+
+    Main page (http://localhost:8000/news/) should contain 4 <a> elements with href to news pages.
+
+    Please find below the output of your program during this failed test.
+
+    ---
+
+    stdout:
+    Performing system checks...
+
+    System check identified no issues (0 silenced).
+    March 20, 2023 - 19:52:41
+    Django version 4.1.1, using settings 'hypernews.settings'
+    Starting development server at http://127.0.0.1:8000/
+    Quit the server with CONTROL-C.
+
+    stderr:
+    [20/Mar/2023 19:52:42] "GET / HTTP/1.1" 200 145
+    [20/Mar/2023 19:52:42] "GET /news/9234732/ HTTP/1.1" 200 263
+    [20/Mar/2023 19:52:42] "GET / HTTP/1.1" 200 145
+    [20/Mar/2023 19:52:42] "GET /news/1/ HTTP/1.1" 200 242
+    [20/Mar/2023 19:52:42] "GET /news/2/ HTTP/1.1" 200 242
+    [20/Mar/2023 19:52:42] "GET /news/3/ HTTP/1.1" 200 242
+    [20/Mar/2023 19:52:42] "GET /news/9234732/ HTTP/1.1" 200 263
+    [20/Mar/2023 19:52:42] "GET /news/ HTTP/1.1" 200 496
+    [20/Mar/2023 19:52:42] "GET /news/ HTTP/1.1" 200 496
+  time: "Mon, 20 Mar 2023 19:52:42 UTC"
 record: -1
