@@ -325,6 +325,7 @@ class HyperNewsTest(DjangoTest):
                 f'Main page ({self.main_page_link}) should contain {len(file_data)} <a> '
                 'elements with href to news pages. Remember, that you need to use ordered dictionary.'
             )
+
         return CheckResult.correct()
 
     def check_creating_news(self):

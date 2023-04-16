@@ -1,0 +1,57 @@
+<h2>Submitting data</h2>
+<div class="step-text">
+<p>Making an interactive service means that your users can receive and send information. We use <code class="language-html">GET</code> requests to get a page and <code class="language-html">POST</code><em>, </em><code class="language-html">PUT</code>, <code class="language-html">PATCH</code>, <code class="language-html">DELETE</code> requests to update data on the server side. It's not a requirement, but a rule to follow. You can still make a valid application if you break it, but its behavior would be unexpected for its users and developers alike.</p><p>Let's look closer at how we can exchange data and make the first <code class="language-html">POST</code> and <code class="language-html">DELETE</code> request handlers!</p><h5 id="query-parameters">Query parameters</h5><p>I have a dream. Many of us do, and sharing dreams and desires with others is a thing. Maybe if you share your wish with the right person, they can make it come true. Creating a wishlist is a simple way to do that. Ideally, the service should allow users to search wishes by keywords, create new wishes and delete those that are not relevant to them anymore.</p><p>We want the service to do a variety of actions, so how do you tell apart these different requests? Would their only distinctive feature be their HTTP methods? Well, to start processing any request we should look at its method. The URL for different types may stay the same while the action of the server would be different. We use only one URL for each user: <em>&lt;address of server&gt;/&lt;username&gt;</em>. If the hostname is <em>www.makeawish.happen</em> and the username is <code class="language-html">Mymble</code>, the full address to Mymble's wishlist will be <em>www.makeawish.happen/Mymble</em>.</p><p>To search, we would use a <code class="language-html">GET</code> request. For example, searching by keyword may look like <em>www.makeawish.happen/Mymble?q=cake. </em>We use a <a href="https://en.wikipedia.org/wiki/Query_string" rel="noopener noreferrer nofollow" target="_blank">query string</a> after the question mark to specify the parameters and their values. To access these values in a request handler, we can use the <a href="https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.HttpRequest.GET" rel="noopener noreferrer nofollow" target="_blank">GET attribute</a> of the <code class="language-html">HttpRequest</code> class. Query parameters are associated with <code class="language-html">GET</code> requests, so we can find them in this attribute.</p><p>The <code class="language-html">q</code> parameter in the <code class="language-html">GET</code> attribute can now be accessed as a key in a dictionary because this attribute is a <code class="language-html">QueryDict</code> instance. <code class="language-html">QueryDict</code> is a subclass of Python's dictionary, but the main difference is that <code class="language-html">QueryDict</code> is <strong>immutable</strong>; you can't modify the user's request, which makes sense.</p><h5 id="request-body">Request body</h5><p>All requests have a body. Sometimes it's empty, but for <code class="language-html">POST</code> requests, it's filled with data. In these cases, you can find what the client sent to the server in the <a href="https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.HttpRequest.POST" rel="noopener noreferrer nofollow" target="_blank">POST</a> attribute of the <code class="language-html">HttpRequest</code> class.</p><p>How does a client create the request body? You cannot find it in the URL, but you can pass it in an HTML form. Assume that we have the following form:</p><pre><code class="language-html">&lt;form action="/Mymble" method="post"&gt;
+  {% csrf_token %}
+  &lt;input name="wish"&gt;
+  &lt;button type="submit"&gt;Add a wish&lt;/button&gt;
+&lt;/form&gt;</code></pre><p>The <code class="language-html">wish</code> parameter is stored in the <code class="language-html">POST</code> attribute. This attribute is also a <code class="language-html">QueryDict</code> instance, so use it as a usual dictionary; still, do not change anything in it, you will get an <code class="language-html">AttributeError</code> exception. Let us move on to making a handler and processing a new wish.</p><p></p><div class="alert alert-warning"><p>We have only <code class="language-html">GET</code> and <code class="language-html">POST</code><em> </em>attributes in the <code class="language-html">HttpRequest</code> class. Even though we have other HTTP methods, there are no other attributes with their names in an instance of this class.</p></div><p></p><p>To make this example work, create the <code class="language-html">WishForm</code> class in the <em>forms.py</em> file and an HTML template with the name <em>form_template.html.</em></p><p>As we use the username in data processing, we assume to already have authorization functionality created. Let's pretend it's all setup and examine the way it might work.</p><h5 id="post-request">POST request</h5><p>Making a wish is the first step in bringing it to life. We use the <code class="language-html">POST</code> handler to save a wish in the application; the signature of a method is similar to the <code class="language-html">GET</code> handler. The lists are stored only in a static attribute of a class — let's see an example of <em>views.py</em>:</p><pre><code class="language-python">from collections import defaultdict
+
+from django.shortcuts import redirect
+from django.views import View
+
+class WishListView(View):
+   form_class = WishForm
+   initial = {'key': 'value'}
+   template_name = 'form_template.html'
+ 
+   def get(self, request, *args, **kwargs):
+       form = self.form_class(initial=self.initial)
+       return render(request, self.template_name, {'form': form})
+ 
+   wishlist = defaultdict(list)
+ 
+   def post(self, request, *args, **kwargs):
+      author = 'Anonymous'
+      if request.user.is_authenticated:
+           author = request.user.username
+      form = self.form_class(request.POST)
+      if form.is_valid():
+           wish = form.cleaned_data['wish']
+           self.wishlist[author].append(wish)
+           return redirect('/')
+</code></pre><p><code class="language-html">request.user.is_authenticated</code> is the request attribute that represents the current user and whether they are authenticated. The wishes are grouped by the author; if a user is not authorized, their wish goes to the <em>Anonymous</em> group. When a wish is saved, the handler redirects the client to the <code class="language-html">/</code> page, which is usually the main page of the application. Redirection is a simple mechanism to prevent double sending modification requests when the user refreshes the page or clicks the form <code class="language-html">submit</code> button several times. Assume the user sends data and refreshes the page the very next moment. Refreshing repeats the action and sends data again. Redirection is not a 100% mechanism to prevent multiple sending, but it's ok for things like wishlists.</p><p>Django matches the <em>HTTP</em> method with the same-name method in the <code class="language-html">View</code> class. With this type of inheritance, only the implemented methods are allowed in requests. For example, if there's no <code class="language-html">GET</code> method for a given link, the answer to such a request would be <code class="language-html">405 Method Not Allowed</code>. In this example, we've added the <code class="language-html">GET</code> method, which shows us the form on a page in case we don't post anything at the moment. </p><h5 id="delete-request">DELETE request</h5><p>Fleeting wishes come and go; when they go, our user would probably want to remove them from the wishlist. The most appropriate method for this task is <code class="language-html">DELETE</code>.</p><p>We add the <code class="language-html">delete</code> handler to the same class and use the same link for different requests. As we said, it's valid to make requests with different HTTP methods to the same link, and the type of method defines which handler will process the request.</p><pre><code class="language-python">from collections import defaultdict
+
+from django.shortcuts import redirect, Http404
+from django.views import View
+
+
+class WishListView(View):
+    wishlist = defaultdict(list)
+ 
+    def delete(self, request, wish, *args, **kwargs):
+        author = 'Anonymous'
+        if request.user.is_authenticated:
+            author = request.user.username
+ 
+        if wish in self.wishlist[author]:
+            self.wishlist[author].remove(wish)
+        else:
+             raise Http404
+        return redirect('/')
+ 
+    def get(self, request, *args, **kwargs):
+        …
+    def post(self, request, *args, **kwargs):
+        ...
+</code></pre><p>We cannot use the <code class="language-html">POST</code> attribute of the <code class="language-html">HttpRequest</code> instance: it contains the data only for <code class="language-html">POST</code> requests, so we pass a wish in a query to define what to remove.</p><p>You can define the named parameters like the one above with <a href="https://docs.djangoproject.com/en/4.1/topics/http/urls/#example" rel="noopener noreferrer nofollow" target="_blank">urlpatterns</a>.</p><p>Users are redirected again, but this time it's not obligatory. It's impossible to delete the same object twice, so it's safe to call this method several times in a row, as the object is already removed after the first call. The property of an operation to be applied several times without changing the result beyond the initial call is called <strong>idempotency</strong>.</p><p></p><div class="alert alert-primary"><p><code class="language-html">DELETE</code>,<em> </em><code class="language-html">PUT</code>, and<em> </em><code class="language-html">GET</code> methods are idempotent while <code class="language-html">POST</code> is not.</p></div><p></p><h5 id="conclusion">Conclusion</h5><p>If you didn't make your wishlist yet, it might be interesting to do so, but you can also go ahead and make an entire wishlist service for you and other folks out there. You can customize the pages, implement all HTTP methods and invite your friends to post their wishes and share them with the world (wide web).</p>
+</div>

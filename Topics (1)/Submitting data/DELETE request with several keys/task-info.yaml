@@ -1,0 +1,22 @@
+type: code
+files:
+- name: main.py
+  visible: true
+  text: |-
+    from django.shortcuts import redirect
+    from django.views import View
+
+
+    class TodoView(View):
+        all_todos = []
+
+        def delete(self, request, todo, important, *args, **kwargs):
+           ...
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/27222#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Sun, 16 Apr 2023 23:26:22 UTC"
+record: -1
+submission_language: python3
