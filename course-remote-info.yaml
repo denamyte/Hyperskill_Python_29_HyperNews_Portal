@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/339506/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Mon, 20 Mar 2023 12:09:31 UTC"
+update_date: "Sat, 15 Apr 2023 23:15:47 UTC"
 stages:
 - id: 561
   step: 9411
@@ -13,7 +13,7 @@ stages:
   is_completed: true
 - id: 563
   step: 9413
-  is_completed: false
+  is_completed: true
 - id: 564
   step: 9414
   is_completed: false
@@ -47,7 +47,7 @@ topics:
   - title: Django MVC
     theory_id: 15548
   - title: Django project structure
-    theory_id: 6285
+    theory_id: 27226
   - title: Starting a project
     theory_id: 26862
   - title: File types
@@ -238,7 +238,7 @@ topics:
   - title: Domains
     theory_id: 6911
   - title: Submitting data
-    theory_id: 7332
+    theory_id: 27221
   - title: Datetime parsing and formatting
     theory_id: 9814
   - title: Random module

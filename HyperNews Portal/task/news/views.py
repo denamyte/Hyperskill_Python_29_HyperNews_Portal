@@ -14,16 +14,11 @@ def read_news() -> List[Dict[str, str | int]]:
 NEWS = read_news()
 
 
-def sort_by_day(news: List[Dict[str, str | int]]) -> Dict[str, List[Dict[str, str | int]]]:
-    key_set = {n['created'].split()[0] for n in news}
-    keys = sorted(key_set, reverse=True)
-    by_day = {}
-
-    for key in keys:
-        by_day[key] = sorted([n for n in news if key in n['created']],
-                             reverse=True,
-                             key=lambda n: n['created'])
-    return by_day
+def sort_by_day(news: List[Dict[str, str | int]]) -> List[Dict[str, str | int]]:
+    sorted_news = sorted(news, key=lambda n: n['created'], reverse=True)
+    for n in sorted_news:
+        n['day'] = n['created'].split()[0]
+    return sorted_news
 
 
 def coming(request):
@@ -32,8 +27,8 @@ def coming(request):
 
 class MainView(View):
     def get(self, request, *args, **kwargs):
-        context = {'by_day': sort_by_day(NEWS)}
-        return render(request, 'news/main.html', context=context)
+        by_day = {'by_day': sort_by_day(NEWS)}
+        return render(request, 'news/main.html', context=by_day)
 
 
 class ArticleView(View):
