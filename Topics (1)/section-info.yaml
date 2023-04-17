@@ -1,3 +1,5 @@
 custom_name: Topics
 content:
 - Submitting data
+- Django template language
+- Datetime parsing and formatting

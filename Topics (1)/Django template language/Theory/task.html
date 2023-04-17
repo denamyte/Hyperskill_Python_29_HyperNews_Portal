@@ -1,0 +1,55 @@
+<h2>Django template language</h2>
+<div class="step-text">
+<p>A typical HTML page consists of hundreds or even thousands of lines: it's a lot of repetitive work. But what if you need to change a tag or a class of several similar elements? If you're working on a site, this little problem can totally spoil the evening. Yet there is a way to avoid unnecessary copy-pasting: you can use the power of <strong>Django Template Language (DTL)</strong>.</p><h5 id="dtl">DTL</h5><p>DTL is a language that allows you to manipulate the elements of an HTML page on the server side. <strong>Templates</strong> are files that consist of special syntax constructions and HTML layout. These constructions allow you to modify the page content before sending it to the client. So templates help you personalize a page directly: for each user, with love.</p><p>The work with DTL starts with four basic pillars: <strong>variables</strong>, <strong>control expressions</strong>, <strong>tags</strong>, and <strong>filters</strong>. All of that comes with the framework. You can also define your own filters and tags, but before you get to that, let's figure out what can you get from the box, starting with variables and control expressions.</p><p> </p><p></p><div class="alert alert-primary"><p></p><p>Remember, templates have tools for programming right on the page, but you should not overuse them: for that purpose, views handlers are more appropriate. If you only need the length of some expression and not the expression itself, you should calculate the length before sending it to a template. But if you need both, DTL will come in handy.</p><p></p></div><p></p><p> </p><h5 id="prepare-a-project">Prepare a project</h5><p>Suppose there is a John Doe, a guy who's working on creating some genius blog. Every blog starts with the first post and the first impression, so the content better be good; we'll leave that to John though, since our job here is code.</p><p>To launch examples, create a Django project with any name you like and add the application <em>blog</em> in it. Define a simple handler to render a template in the <em>blog/views.py</em> module:</p><pre><code class="language-python">from django.views import View
+from django.shortcuts import render
+
+blog_name = "John Doe's blog"
+post = {
+    "text": "My first post",
+    "theme": "Easy talk",
+    "comments": [
+        "My congratulations!!",
+        "Looking forward to the second one",
+    ],
+}
+
+
+class MainView(View):
+    def get(self, request, *args, **kwargs):
+        context = {"post": post, "blog_name": blog_name}
+        return render(request, "blog/index.html", context=context)</code></pre><p>Do not forget to add <code class="language-python">"blog"</code> to your <code class="language-python">INSTALLED_APPS</code> in the <em>settings.py</em> module, and then add this code to your <em>urls.py</em> module:</p><pre><code class="language-python">from django.urls import path
+from blog.views import MainView
+ 
+urlpatterns = [
+    path("", MainView.as_view()),
+]</code></pre><p>You don't need to understand how this code works now: just look through the content of the <code class="language-python">post</code> and <code class="language-python">blog_name</code> variables.</p><p>Finally, create the <em>blog/templates/blog/index.html</em> file and paste this to it:</p><pre><code class="language-html">&lt;html&gt;
+  &lt;body&gt;
+    &lt;h2&gt;{{ blog_name }}&lt;/h2&gt;
+    &lt;div&gt;{{ post.text }}&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>You can keep using this file later on, just replace its content when you need!</p><h5 id="variables">Variables</h5><p><strong>Variables </strong>are used to deliver the data to the templates. Usually, all data comes from the controller, but you can define your own variables right in the template, too. </p><p>Here is what you can pass from the Python code to the template:</p><ul><li><p>primitive types like integers and strings</p></li><li><p>common Python structures such as dict, list, set, or tuple</p></li><li><p>functions with no extra arguments</p></li><li><p>an instance of a custom class</p></li></ul><p> </p><p></p><div class="alert alert-primary"><p></p><p>Actually, you can pass any Python object in templates, but for any other type it makes no sense because you cannot use them properly. </p><p></p></div><p></p><p> </p><p>To render the variable or its attributes, you should use special syntax to distinguish DTL from HTML. Put the variable in double curly brackets <code class="language-python">{{</code> and <code class="language-python">}}</code>:</p><pre><code class="language-html">&lt;!-- Accessing a variable --&gt;
+&lt;h2&gt;{{ blog_name }}&lt;/h2&gt;</code></pre><p>If you want to access the attributes of the variable, use the dot operator:</p><pre><code class="language-html">&lt;!-- Accessing the value of a dict by key --&gt;
+&lt;div&gt;{{ post.text }}&lt;/div&gt;</code></pre><p>It's possible to call the variable's method without extra arguments, the difference is that you don't need round brackets after the call. If you want to capitalize all words in the blog name, call the title method of a string variable <code class="language-python">{{ blog_name.title }}</code>. Here is a nice simple example for you:</p><pre><code class="language-html">&lt;h2&gt;{{ blog_name.title }}&lt;/h2&gt;
+</code></pre><h5 id="conditions">Conditions</h5><p>With controlling statements, we can choose what we show or do on the page depending on the conditions.</p><p>Just like in Python, branching in DTL consists of <code class="language-python">if</code>, <code class="language-python">elif</code>, and <code class="language-python">else</code> statements. Curly brackets with the percent sign <code class="language-python">{%</code> and <code class="language-python">%}</code> embrace them and all the other tags: it differs tags from variables syntactically.</p><p>All branches should start with <code class="language-python">{% if %}</code> and end with <code class="language-python">{% endif %}</code> statements.</p><p>Let's get back to our example: we've notified John that we used his first post as an example for our topic, so he makes the next entry with the link to our site. The text of the post speaks for itself, so John does not add a theme. He wants to retain the layout of a page, and if there's no theme, the header will be <em>"No theme"</em> as well:</p><pre><code class="language-html">&lt;html&gt;
+  &lt;body&gt;
+    &lt;h3&gt;
+      {% if post.theme %} 
+          Theme: {{ post.theme }}
+      {% else %} 
+          No theme
+      &lt;!-- Without the closing tag the whole expression is not correct --&gt;
+      {% endif %}
+    &lt;/h3&gt;
+    &lt;a href="https://hyperskill.org"&gt;How to make a post entry with Django&lt;/a&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>If you don't have a variable at all when you get access to a value, it's not a grave mistake. The rule is, if we do not pass a variable in the context, the value of this variable is by default <code class="language-python">None</code>.</p><p> </p><p></p><div class="alert alert-primary"><p></p><p>Be cautious if you want to access attributes and methods of <code class="language-python">None</code>: this will cause an error.</p><p></p></div><p></p><p> </p><h5 id="loops">Loops</h5><p>Sometimes we don't know how many items we've got in a list, but we still want to show all of them one by one on a page. Loops are helpful when you have to iterate over a lot of similar elements.</p><p>The template loops are similar to Python <em>for</em> expressions. Start one with <code class="language-python">{% for %}</code> and end it with <code class="language-python">{% endfor %}</code> statements.</p><p>For example, look at the comment section under John's first post: he's getting somewhere! Let's render all comments to the post one after another:</p><pre><code class="language-html">&lt;html&gt;
+  &lt;body&gt;
+    {% for comment in post.comments %}
+      &lt;div&gt;Comment #{{ forloop.counter }}: {{ comment }}&lt;/div&gt;
+    {% endfor %}
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>To access the index of the element, we use <code class="language-python">{{ forloop.counter0 }}</code> for zero-based iteration and <code class="language-python">{{ forloop.counter }}</code> for one-based .</p><h5 id="conclusion">Conclusion</h5><p>Let's summarize! Templates provide tools to:</p><ul><li><p>Pass variables to the HTML layout</p></li><li><p>Control the data you render</p></li><li><p>Iterate over multiple similar elements</p></li></ul><p>Template language helps you work with the HTML layout and make your life as a developer much easier. And not a single John will get hurt when creating a blog!</p>
+</div>
