@@ -1,9 +1,12 @@
+from datetime import datetime
 import json
 from typing import Dict, List
 
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
+
+from .forms import CreateForm
 
 
 def read_news() -> List[Dict[str, str | int]]:
@@ -35,3 +38,20 @@ class ArticleView(View):
     def get(self, request, link: int, *args, **kwargs):
         article = next((a for a in NEWS if link == a['link']), None)
         return render(request, 'news/article.html', context=article)
+
+
+class CreateNewsView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'news/create.html')
+
+    def post(self, request, *args, **kwargs):
+        form = CreateForm(request.POST)
+        if form.is_valid():
+            article = {'created': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                       'text': form.cleaned_data.get('text'),
+                       'title': form.cleaned_data.get('title'),
+                       'link': max(n['link'] for n in NEWS) + 1}
+            NEWS.append(article)
+            with open(settings.NEWS_JSON_PATH, 'w') as f:
+                json.dump(NEWS, f)
+        return redirect('/news/')
