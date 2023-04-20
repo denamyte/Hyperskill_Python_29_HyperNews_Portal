@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/339506/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Wed, 19 Apr 2023 20:26:02 UTC"
+update_date: "Thu, 20 Apr 2023 18:45:42 UTC"
 stages:
 - id: 561
   step: 9411
@@ -19,7 +19,7 @@ stages:
   is_completed: true
 - id: 565
   step: 9415
-  is_completed: false
+  is_completed: true
 topics:
   0:
   - title: IDE
@@ -55,7 +55,7 @@ topics:
   - title: Launching web server
     theory_id: 25353
   - title: Processing requests
-    theory_id: 6472
+    theory_id: 27986
   - title: Django settings file
     theory_id: 17059
   - title: Computer programming

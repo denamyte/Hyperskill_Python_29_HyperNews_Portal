@@ -815,12 +815,9 @@ files:
 - name: news/forms.py
   visible: true
   learner_created: true
-- name: db.test.sqlite3
-  visible: true
-  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/9414#comment
 status: Solved
 feedback:
   message: Congratulations!
   time: "Wed, 19 Apr 2023 14:11:37 UTC"
-record: -1
+record: 8

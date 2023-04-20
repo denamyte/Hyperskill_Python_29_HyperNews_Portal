@@ -17,20 +17,22 @@ def read_news() -> List[Dict[str, str | int]]:
 NEWS = read_news()
 
 
-def sort_by_day(news: List[Dict[str, str | int]]) -> List[Dict[str, str | int]]:
-    sorted_news = sorted(news, key=lambda n: n['created'], reverse=True)
+def sort_by_day(news: List[Dict[str, str | int]], q='') -> List[Dict[str, str | int]]:
+    filtered = filter(lambda n: q in n['title'], news) if q else news
+    sorted_news = sorted(filtered, key=lambda n: n['created'], reverse=True)
     for n in sorted_news:
         n['day'] = n['created'].split()[0]
     return sorted_news
 
 
 def coming(request):
-    return render(request, 'news/index.html')
+    return redirect('/news/')
 
 
 class MainView(View):
     def get(self, request, *args, **kwargs):
-        by_day = {'by_day': sort_by_day(NEWS)}
+        q = request.GET.get('q')
+        by_day = {'by_day': sort_by_day(NEWS, q)}
         return render(request, 'news/main.html', context=by_day)
 
 

@@ -16,5 +16,9 @@
     </ul>
 {% endfor %}
 <a href="/news/create/">Create News</a>
+<form action="/news/" method="get">{% csrf_token %}
+    <label for="q_id">Query: </label>
+    <input id="q_id" name="q" type="text">
+</form>
 </body>
 </html>
